@@ -8,32 +8,28 @@ import os
 import sys
 import logging
 
-# Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Добавляем путь к модулю для импорта функций
-# sys.path.append("D:/pythonProject/MitoFragility/DataPreparing/plots")
 from scatter_plus_n_std import parse_construct_id, calculate_arm_ranges
 
 def csv_constructor(excel_path: Path, output_path: Path) -> pd.DataFrame:
     """Создает CSV с SNV из XLSX"""
-    # Загрузка данных
+
     snv_df = pd.read_excel(excel_path)
-    
-    # Фильтрация по FDR
+
     filtered_snv_df = snv_df[snv_df['FDR'] < 0.056].copy()
     
-    # Определение референсного и альтернативного аллелей
+
     ref_alleles = []
     alt_alleles = []
     
     for _, row in filtered_snv_df.iterrows():
-        # Минорный аллель всегда alt_allele
+
         alt_allele = row['Minor allele']
         alt_alleles.append(alt_allele)
         
-        # Определение референсного аллеля:
+
         if row['Allele1'] == alt_allele:
             ref_alleles.append(row['Allele2'])
         elif row['Allele2'] == alt_allele:
@@ -45,11 +41,9 @@ def csv_constructor(excel_path: Path, output_path: Path) -> pd.DataFrame:
                 f"ни с Allele1 ({row['Allele1']}), ни с Allele2 ({row['Allele2']})"
             )
     
-    # Добавляем новые столбцы
     filtered_snv_df['ref_allele'] = ref_alleles
     filtered_snv_df['alt_allele'] = alt_alleles
     
-    # Сохранение нужных столбцов
     final_df = filtered_snv_df[['Position', 'ref_allele', 'alt_allele']].rename(
         columns={'Position': 'position'}
     )
@@ -60,23 +54,20 @@ def csv_constructor(excel_path: Path, output_path: Path) -> pd.DataFrame:
 
 def get_covered_positions(ref_constructs_dir: str) -> set:
     """Возвращает все позиции, покрытые конструктами референса"""
-    # Проверка существования директории
+
     if not os.path.exists(ref_constructs_dir):
         logger.error(f"Директория с конструктами не существует: {ref_constructs_dir}")
         return set()
-    
-    # Проверка что это директория
+
     if not os.path.isdir(ref_constructs_dir):
         logger.error(f"Путь не является директорией: {ref_constructs_dir}")
         return set()
     
     logger.info(f"Сканирую директорию с конструктами: {ref_constructs_dir}")
     
-    # 1. Загружаем информацию о конструктах референса
     ref_constructs = []
     file_count = 0
     
-    # Получаем список файлов
     files = os.listdir(ref_constructs_dir)
     logger.info(f"Найдено {len(files)} файлов в директории")
     
@@ -95,7 +86,6 @@ def get_covered_positions(ref_constructs_dir: str) -> set:
     logger.info(f"Проверено {file_count} файлов с конструктами")
     logger.info(f"Всего загружено {len(ref_constructs)} конструктов референса")
     
-    # 2. Собираем все позиции, которые покрыты конструктами референса
     covered_positions = set()
     processed_constructs = 0
     
@@ -111,7 +101,6 @@ def get_covered_positions(ref_constructs_dir: str) -> set:
         try:
             arm_ranges = calculate_arm_ranges(arm_size, center, arm3_start, arm4_start)
             for start, end in arm_ranges:
-                # Добавляем +1 чтобы включить конечную позицию
                 covered_positions.update(range(start, end + 1))
             processed_constructs += 1
         except Exception as e:
@@ -132,7 +121,6 @@ def apply_snvs(ref_record, snv_df, log_path: Path, covered_positions: set, num: 
     original_seq = str(ref_record.seq).upper()
     mutable_seq = MutableSeq(original_seq)
     
-    # 1. Фильтруем SNV: только те, что покрыты конструктами
     filtered_snvs = []
     for _, row in snv_df.iterrows():
         position = int(row['position'])
@@ -145,7 +133,6 @@ def apply_snvs(ref_record, snv_df, log_path: Path, covered_positions: set, num: 
     
     logger.info(f"Найдено {len(filtered_snvs)} SNV, покрытых конструктами")
     
-    # 2. Случайный выбор 2 уникальных позиций из покрытых конструктами
     unique_positions = list({snv['position'] for snv in filtered_snvs})
     if len(unique_positions) >= 2:
         selected_positions = random.sample(unique_positions, 2)
@@ -154,7 +141,6 @@ def apply_snvs(ref_record, snv_df, log_path: Path, covered_positions: set, num: 
     
     logger.info(f"Выбрано позиций для мутации: {selected_positions}")
     
-    # 3. Применение выбранных SNV
     applied_count = 0
     mismatch_log = []
     selected_snvs = []
@@ -216,13 +202,11 @@ def apply_snvs(ref_record, snv_df, log_path: Path, covered_positions: set, num: 
                 'notes': '; '.join(notes)
             })
     
-    # 4. Сохранение лога
     if mismatch_log:
         mismatch_df = pd.DataFrame(mismatch_log)
         mismatch_df.to_csv(log_path, index=False)
         logger.info(f"Лог мутаций сохранён в {log_path}")
     
-    # Статистика
     logger.info(f"\nСтатистика применения SNV для последовательности #{num}:")
     logger.info(f"Всего SNV покрытых конструктами: {len(filtered_snvs)}")
     logger.info(f"Уникальных позиций: {len(unique_positions)}")
@@ -236,7 +220,7 @@ def apply_snvs(ref_record, snv_df, log_path: Path, covered_positions: set, num: 
     )
 
 def main(num: int):
-    # Конфигурация
+
     SNV_CSV_PATH = Path("D:/pythonProject/MitoFragility/DataPreparing/snv_csv/snvs.csv")
     INPUT_FASTA = Path("D:/pythonProject/MitoFragility/DataPreparing/sequences/ref_seq/Homo_sapiens_assembly38.chrM.fasta")
     XLSX_PATH = Path("D:/pythonProject/MitoFragility/DataPreparing/raw_data/MitoPhewas_associations.xlsx")
@@ -244,33 +228,28 @@ def main(num: int):
     OUTPUT_FASTA = Path(f"D:/pythonProject/MitoFragility/DataPreparing/sequences/relative_seq/test_individual_{num+4}.fasta")
     REF_CONSTRUCTS_DIR = "D:/pythonProject/MitoFragility/MitoFragilityScore/Energies/SEQ-g38_Mt-Short_Test"
     
-    # 1. Создаем CSV с SNV (только при первом запуске)
     if num == 0 and not SNV_CSV_PATH.exists():
         snv_df = csv_constructor(XLSX_PATH, SNV_CSV_PATH)
     else:
         snv_df = pd.read_csv(SNV_CSV_PATH)
     
-    # 2. Загружаем референсную последовательность
     ref_record = SeqIO.read(INPUT_FASTA, "fasta")
     logger.info(f"Загружена референсная последовательность: {ref_record.id}")
     logger.info(f"Длина: {len(ref_record.seq)} bp")
     
-    # 3. Получаем покрытые позиции
     covered_positions = get_covered_positions(REF_CONSTRUCTS_DIR)
     
-    # 4. Применяем SNV
     custom_record = apply_snvs(ref_record, snv_df, LOG_PATH, covered_positions, num)
     
-    # 5. Сохраняем результат
     SeqIO.write(custom_record, OUTPUT_FASTA, "fasta")
     logger.info(f"Результат сохранен в {OUTPUT_FASTA}")
     logger.info(f"ID: {custom_record.id}")
     logger.info(f"Описание: {custom_record.description}")
 
 if __name__ == "__main__":
-    # Создаем 5 вариантов последовательностей
     for i in range(5):
         logger.info(f"\n{'='*50}")
         logger.info(f"Создание последовательности #{i}")
         logger.info(f"{'='*50}")
+
         main(i)
