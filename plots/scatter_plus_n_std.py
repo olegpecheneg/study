@@ -10,11 +10,9 @@ from collections import defaultdict
 from matplotlib.lines import Line2D
 import colorsys
 
-# Настройка бэкенда и шрифта
 matplotlib.use('Agg')
 plt.rcParams['font.family'] = 'DejaVu Sans'
 
-# Настройка логирования с кодировкой UTF-8
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 file_handler = logging.FileHandler('visualization.log', encoding='utf-8')
@@ -422,18 +420,14 @@ def write_outlier_stats(outliers_stats, output_dir, individual_id):
     logger.info(f"Статистика по выбросам сохранена: {stats_path}")
 
 def main():
-    # Базовые пути
     base_dir = "D:/pythonProject/MitoFragility/MitoFragilityScore/Energies"
     output_base_dir = "D:/pythonProject/MitoFragility/DataPreparing/plots/output"
     snp_base_dir = "D:/pythonProject/MitoFragility/MitoFragilityScore/Sequences/Relative"
     
-    # Фиксированная референсная директория
     ref_dir = os.path.join(base_dir, "SEQ-g38_Mt-Short_Test")
     
-    # Создаем базовую выходную директорию
     os.makedirs(output_base_dir, exist_ok=True)
     
-    # Находим все директории тестов
     individual_dirs = find_individual_dirs(base_dir)
     
     if not individual_dirs:
@@ -442,12 +436,9 @@ def main():
     
     logger.info(f"Найдено директорий теста: {len(individual_dirs)}")
     
-    # Обрабатываем каждую директорию теста
     for alt_dir, individual_id in individual_dirs:
-        # Формируем путь к файлу SNP
         snp_file_path = os.path.join(snp_base_dir, f"test_individual_{individual_id}.csv")
         
-        # Проверяем существование необходимых путей
         if not os.path.exists(alt_dir):
             logger.warning(f"Директория теста не существует: {alt_dir}")
             continue
@@ -457,7 +448,7 @@ def main():
             continue
             
         try:
-            # Обрабатываем текущий тест
+        
             process_individual(
                 ref_dir, 
                 alt_dir, 
@@ -469,4 +460,5 @@ def main():
             logger.error(f"Ошибка при обработке теста {individual_id}: {str(e)}")
 
 if __name__ == "__main__":
+
     main()
