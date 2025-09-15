@@ -1,0 +1,23 @@
+Outlier statistics by energy type:
+==================================================
+EnergyLeft:
+  Total points: 126
+  Mean difference (ref - alt): -2.7421
+  Std deviation: 7.1118
+  Upper outliers (> +2std): 2 (1.59%)
+  Lower outliers (< -2std): 7 (5.56%)
+
+EnergyRight:
+  Total points: 126
+  Mean difference (ref - alt): 3.7437
+  Std deviation: 8.4312
+  Upper outliers (> +2std): 2 (1.59%)
+  Lower outliers (< -2std): 3 (2.38%)
+
+Energy:
+  Total points: 126
+  Mean difference (ref - alt): 3.3452
+  Std deviation: 10.1448
+  Upper outliers (> +2std): 6 (4.76%)
+  Lower outliers (< -2std): 1 (0.79%)
+
