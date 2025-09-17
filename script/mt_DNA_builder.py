@@ -79,6 +79,8 @@ def csv_constructor(excel_path: Path, output_path: Path) -> pd.DataFrame:
     filtered_snv_df['ref_allele'] = ref_alleles
     filtered_snv_df['alt_allele'] = alt_alleles
     final_df = filtered_snv_df[['Position', 'ref_allele', 'alt_allele']].rename(columns={'Position': 'position'})
+    # Ensure parent directory exists before saving
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     final_df.to_csv(output_path, index=False)
     logger.info(f"Saved {len(final_df)} unique SNVs to {output_path}")
     return final_df
@@ -390,6 +392,8 @@ def _save_mismatch_log(mismatch_log: List[Dict[str, Any]], log_path: Path) -> No
         log_path (Path): Path to the log file.
     """
     if mismatch_log:
+        # Ensure parent directory exists for log_path
+        log_path.parent.mkdir(parents=True, exist_ok=True)
         mismatch_df = pd.DataFrame(mismatch_log)
         mismatch_df.to_csv(log_path, index=False)
         logger.info(f"Mutation log saved to {log_path}")
