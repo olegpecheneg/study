@@ -3,42 +3,13 @@ import os
 import random
 import logging
 from pathlib import Path
-from typing import Tuple, List, Set, Dict, Any, Optional
+from typing import Tuple, List, Set, Dict, Any
 
 import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import MutableSeq
 from Bio.SeqRecord import SeqRecord
-import importlib.util
-
-
-
-def import_scatter_module() -> Any:
-    """
-    Dynamically imports the scatter_plus_n_std.py module from the plots directory.
-
-    Returns:
-        The imported module object.
-    Raises:
-        FileNotFoundError: If the module file does not exist.
-        ImportError: If the module cannot be loaded.
-    """
-    plots_path = Path(__file__).resolve().parent.parent / "plots"
-    scatter_path = plots_path / "scatter_plus_n_std.py"
-    if not scatter_path.exists():
-        raise FileNotFoundError(f"Module not found: {scatter_path}")
-    spec = importlib.util.spec_from_file_location("scatter_plus_n_std", scatter_path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"Could not load spec for {scatter_path}")
-    scatter_mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(scatter_mod)
-    return scatter_mod
-
-
-scatter_mod = import_scatter_module()
-parse_construct_id = scatter_mod.parse_construct_id
-calculate_arm_ranges = scatter_mod.calculate_arm_ranges
-
+from scatter_plus_n_std import parse_construct_id, calculate_arm_ranges
 
 
 def setup_logger() -> logging.Logger:
@@ -453,6 +424,7 @@ def main(num: int) -> None:
     logger.info(f"Length: {len(ref_record.seq)} bp")
     covered_positions = get_covered_positions(ref_constructs_dir)
     custom_record = apply_snvs(ref_record, snv_df, log_path, covered_positions, num)
+    output_fasta.parent.mkdir(parents=True, exist_ok=True)
     SeqIO.write(custom_record, output_fasta, "fasta")
     logger.info(f"Result saved to {output_fasta}")
     logger.info(f"ID: {custom_record.id}")
