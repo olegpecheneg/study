@@ -1,23 +1,23 @@
-Outlier statistics by energy type:
+Статистика выбросов по типам энергии:
 ==================================================
 EnergyLeft:
-  Total points: 289
-  Mean difference (ref - alt): -1.1651
-  Std deviation: 5.0190
-  Upper outliers (> +2std): 4 (1.38%)
-  Lower outliers (< -2std): 22 (7.61%)
+  Всего точек: 289
+  Средняя разница (ref - alt): -1.1651
+  Стандартное отклонение: 5.0190
+  Верхние выбросы (> +2std): 4 (1.38%)
+  Нижние выбросы (< -2std): 22 (7.61%)
 
 EnergyRight:
-  Total points: 289
-  Mean difference (ref - alt): -0.6332
-  Std deviation: 6.4338
-  Upper outliers (> +2std): 6 (2.08%)
-  Lower outliers (< -2std): 9 (3.11%)
+  Всего точек: 289
+  Средняя разница (ref - alt): -0.6332
+  Стандартное отклонение: 6.4338
+  Верхние выбросы (> +2std): 6 (2.08%)
+  Нижние выбросы (< -2std): 9 (3.11%)
 
 Energy:
-  Total points: 289
-  Mean difference (ref - alt): -1.0702
-  Std deviation: 7.1965
-  Upper outliers (> +2std): 5 (1.73%)
-  Lower outliers (< -2std): 8 (2.77%)
+  Всего точек: 289
+  Средняя разница (ref - alt): -1.0702
+  Стандартное отклонение: 7.1965
+  Верхние выбросы (> +2std): 5 (1.73%)
+  Нижние выбросы (< -2std): 8 (2.77%)
 

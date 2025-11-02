@@ -405,6 +405,7 @@ def main(num: int) -> None:
     """
     base_dir = Path(__file__).resolve().parent.parent
     snv_csv_path = base_dir / "snv_csv" / "snvs.csv"
+    exp_snv_csv_path = base_dir / "snv_csv" / "exp_snvs.csv"
     input_fasta = base_dir / "sequences" / "ref_seq" / "Homo_sapiens_assembly38.chrM.fasta"
     xlsx_path = base_dir / "raw_data" / "MitoPhewas_associations.xlsx"
     log_path = base_dir / "snv_log" / f"snv_log_{num}.csv"
