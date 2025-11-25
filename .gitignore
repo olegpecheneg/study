@@ -205,3 +205,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Project raw data (ignore by default). We kept a one-time snapshot of `raw_data/`
+# in the repository history on purpose — don't add or upload raw_data again.
+raw_data/
