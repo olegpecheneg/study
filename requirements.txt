@@ -1,0 +1,7 @@
+numpy
+pandas
+matplotlib
+plotly
+mplcursors
+mpld3
+biopython
