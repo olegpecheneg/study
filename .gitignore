@@ -209,3 +209,32 @@ __marimo__/
 # Project raw data (ignore by default). We kept a one-time snapshot of `raw_data/`
 # in the repository history on purpose — don't add or upload raw_data again.
 raw_data/
+!raw_data/.gitkeep
+
+# Project-specific output and processing directories
+# Pipeline outputs to ignore (but keep .gitkeep)
+output/*
+!output/.gitkeep
+logs/*
+!logs/.gitkeep
+input/*
+!input/.gitkeep
+
+# Temporary directories to ignore
+aggregate_full_output/
+aggregate_summary_output/
+aggregate_summary_output_fixed/
+tmp_html_test/
+snv_log/
+
+# Legacy and temporary scripts
+cleanup.ps1
+setup_env.ps1
+setup_env.sh
+
+# Old pipeline outputs
+script/scripts/
+script/mt_DNA_builder.py
+
+# Sequences generated during processing
+sequences/relative_seq/
